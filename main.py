@@ -11,9 +11,9 @@ line_bot_api = LineBotApi(os.getenv("LINE_CHANNEL_ACCESS_TOKEN"))
 handler = WebhookHandler(os.getenv("LINE_CHANNEL_SECRET"))
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-@app.route("/callback", methods=['POST'])
+@app.route("/callback", methods=["POST"])
 def callback():
-    signature = request.headers['X-Line-Signature']
+    signature = request.headers["X-Line-Signature"]
     body = request.get_data(as_text=True)
 
     try:
@@ -21,7 +21,7 @@ def callback():
     except InvalidSignatureError:
         abort(400)
 
-    return 'OK'
+    return "OK"
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
@@ -30,7 +30,7 @@ def handle_message(event):
         model="gpt-3.5-turbo",
         messages=[{"role": "user", "content": user_msg}]
     )
-    reply = response['choices'][0]['message']['content'].strip()
+    reply = response["choices"][0]["message"]["content"].strip()
     line_bot_api.reply_message(
         event.reply_token,
         TextSendMessage(text=reply)
