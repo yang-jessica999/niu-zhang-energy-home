@@ -1,6 +1,6 @@
 from flask import Flask, request, abort
-import os
 import openai
+import os
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
@@ -11,17 +11,10 @@ line_bot_api = LineBotApi(os.getenv("LINE_CHANNEL_ACCESS_TOKEN"))
 handler = WebhookHandler(os.getenv("LINE_CHANNEL_SECRET"))
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-@app.route("/", methods=["GET"])
-def index():
-    return "LINE Bot is running!"
-
 @app.route("/callback", methods=['POST'])
 def callback():
-    signature = request.headers.get('X-Line-Signature')
+    signature = request.headers['X-Line-Signature']
     body = request.get_data(as_text=True)
-
-    if signature is None:
-        abort(400)
 
     try:
         handler.handle(body, signature)
